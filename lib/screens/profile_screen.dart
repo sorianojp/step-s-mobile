@@ -23,8 +23,9 @@ class _ProfileState extends State<Profile> {
               borderRadius: BorderRadius.circular(60),
               image: widget.user?.avatar != null
                   ? DecorationImage(
-                      image:
-                          CachedNetworkImageProvider('${widget.user?.avatar}'),
+                      image: CachedNetworkImageProvider(
+                        '${widget.user?.avatar}',
+                      ),
                       fit: BoxFit.cover,
                     )
                   : null,
@@ -47,15 +48,13 @@ class _ProfileState extends State<Profile> {
                 : null,
           ),
           SizedBox(height: 8),
-          Text(
-            '${widget.user!.email}',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
-          ),
-          SizedBox(height: 10),
+
           Text(
             '${widget.user!.name}',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
           ),
+          Text('${widget.user!.email}', style: TextStyle(fontSize: 12)),
+          SizedBox(height: 10),
         ],
       ),
     );
