@@ -76,8 +76,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Palette.kToDark,
-        foregroundColor: Colors.white,
+        foregroundColor: Palette.kToDark,
         title: Text(_getAppBarTitle(currentIndex)),
         actions: [
           Stack(

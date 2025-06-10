@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:step/constants.dart';
 import 'package:step/models/assignment_model.dart';
 import 'package:step/models/response_model.dart';
+import 'package:step/palette.dart';
 import 'package:step/screens/login_screen.dart';
 import 'package:step/services/assignment_service.dart';
 import 'package:step/services/user_service.dart';
@@ -83,32 +84,32 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
                 widget.assignment.title?.isEmpty ?? true
                     ? 'No Title'
                     : widget.assignment.title!,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
               Text(
-                'Due ${DateFormat.yMMMMd().format(DateTime.parse(widget.assignment.due!))}',
-                style: TextStyle(color: Colors.grey),
+                'Due on ${DateFormat.yMMMMd().format(DateTime.parse(widget.assignment.due!))}',
+                style: TextStyle(fontSize: 10, color: Colors.grey),
               ),
               Text(
                 '${widget.assignment.points.toString()} Points',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(fontSize: 10, color: Colors.grey),
               ),
               Text(
                 'Resubmission Count: ${widget.assignment.submission.toString()}',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(fontSize: 10, color: Colors.grey),
               ),
               SizedBox(height: 12),
               Text(
                 '${widget.assignment.instructions!.replaceAll(RegExp('<p>|</p>|<br />'), '')}',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(fontSize: 10),
               ),
               SizedBox(height: 18),
               Divider(),
               SizedBox(height: 18),
               Text(
                 'Instructor Attachments',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               TextButton(
                 onPressed: () {
@@ -122,6 +123,12 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _selectFile,
                   child: Text(
                     file == null
@@ -133,8 +140,15 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Palette.kToDark,
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _submitAssignment,
-                  child: Text('Submit'),
+                  child: Text('Submit', style: TextStyle(color: Colors.white)),
                 ),
               ),
               SizedBox(height: 18),
@@ -144,7 +158,7 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
                 children: [
                   Text(
                     'Your Work',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     widget.assignment.score != null
@@ -152,8 +166,9 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
                         : 'No score recorded yet',
                     textAlign: TextAlign.right,
                     style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                       color: Colors.grey,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
@@ -168,9 +183,16 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
                   return Card(
                     elevation: 0,
                     child: ListTile(
-                      title: Text(studentAssignment.file!),
+                      title: Text(
+                        studentAssignment.file!,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       subtitle: Text(
                         '${DateFormat.yMMMMd().format(DateTime.parse(studentAssignment.created_at!))}',
+                        style: TextStyle(fontSize: 10, color: Colors.grey),
                       ),
                     ),
                   );

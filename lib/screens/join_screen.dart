@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:step/constants.dart';
 import 'package:step/models/response_model.dart';
+import 'package:step/palette.dart';
 import 'package:step/services/join_service.dart';
 
 class JoinRoomForm extends StatefulWidget {
@@ -21,17 +22,13 @@ class _JoinRoomFormState extends State<JoinRoomForm> {
       ApiResponse response = await joinRoom(roomKey);
 
       if (response.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${response.error}'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('${response.error}')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${response.data}'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('${response.data}')));
         Navigator.pop(context);
       }
     }
@@ -42,19 +39,19 @@ class _JoinRoomFormState extends State<JoinRoomForm> {
     return Scaffold(
       appBar: new AppBar(
         elevation: 0,
-        title: new Text(
-          'Join Room',
-        ),
+        title: new Text('Join Room'),
+        foregroundColor: Palette.kToDark,
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: EdgeInsets.all(32),
+          padding: EdgeInsets.all(16),
           children: [
-            Text('Ask your teacher for the class code, then enter it here.'),
-            SizedBox(
-              height: 20,
+            Text(
+              'Ask your teacher for the class code, then enter it here.',
+              style: TextStyle(fontSize: 16, color: Palette.kToDark),
             ),
+            SizedBox(height: 20),
             TextFormField(
               decoration: kInputDecoration('Room Key'),
               validator: (value) {
@@ -67,9 +64,17 @@ class _JoinRoomFormState extends State<JoinRoomForm> {
                 roomKey = value!;
               },
             ),
+            SizedBox(height: 10),
             ElevatedButton(
               onPressed: _joinRoom,
-              child: Text('OK'),
+              child: Text('Join', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Palette.kToDark,
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ],
         ),

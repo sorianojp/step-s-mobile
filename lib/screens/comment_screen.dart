@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:step/constants.dart';
 import 'package:step/models/comment_model.dart';
 import 'package:step/models/response_model.dart';
+import 'package:step/palette.dart';
 import 'package:step/screens/login_screen.dart';
 import 'package:step/services/comment_service.dart';
 import 'package:step/services/user_service.dart';
@@ -33,36 +34,46 @@ class _CommentScreenState extends State<CommentScreen> {
         _loading = _loading ? !_loading : _loading;
       });
     } else if (response.error == unauthorized) {
-      logout().then((value) => {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Login()),
-                (route) => false)
-          });
+      logout().then(
+        (value) => {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => Login()),
+            (route) => false,
+          ),
+        },
+      );
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('${response.error}')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${response.error}')));
     }
   }
 
   void _createComment() async {
     ApiResponse response = await createComment(
-        widget.announcementID ?? 0, _txtCommentController.text);
+      widget.announcementID ?? 0,
+      _txtCommentController.text,
+    );
 
     if (response.error == null) {
       _txtCommentController.clear();
       _getComments();
     } else if (response.error == unauthorized) {
-      logout().then((value) => {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Login()),
-                (route) => false)
-          });
+      logout().then(
+        (value) => {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => Login()),
+            (route) => false,
+          ),
+        },
+      );
     } else {
       setState(() {
         _loading = false;
       });
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('${response.error}')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${response.error}')));
     }
   }
 
@@ -78,25 +89,34 @@ class _CommentScreenState extends State<CommentScreen> {
       appBar: AppBar(
         elevation: 0,
         title: Text('Class Comments'),
+        foregroundColor: Palette.kToDark,
       ),
       body: _loading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : Column(children: [
-              Expanded(
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
                   child: RefreshIndicator(
-                      onRefresh: () {
-                        return _getComments();
-                      },
-                      child: _commentsList.isEmpty
-                          ? Center(child: Text('No Comments'))
-                          : ListView.builder(
-                              itemCount: _commentsList.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                Comment comment = _commentsList[index];
-                                return Container(
-                                  padding: EdgeInsets.all(10),
+                    onRefresh: () {
+                      return _getComments();
+                    },
+                    child: _commentsList.isEmpty
+                        ? Center(child: Text('No Comments'))
+                        : ListView.builder(
+                            itemCount: _commentsList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              Comment comment = _commentsList[index];
+                              return Card(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 10,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 0,
+                                child: Container(
+                                  padding: EdgeInsets.all(20),
                                   width: MediaQuery.of(context).size.width,
                                   child: Column(
                                     crossAxisAlignment:
@@ -112,87 +132,89 @@ class _CommentScreenState extends State<CommentScreen> {
                                                 width: 30,
                                                 height: 30,
                                                 decoration: BoxDecoration(
-                                                  image: comment.user!.avatar !=
-                                                          null
-                                                      ? DecorationImage(
-                                                          image: CachedNetworkImageProvider(
-                                                              '${comment.user!.avatar}'),
-                                                          fit: BoxFit.cover)
-                                                      : null,
-                                                ),
-                                                child: comment.user?.avatar ==
-                                                        null
-                                                    ? Center(
-                                                        child: Text(
-                                                          '${comment.user?.name?[0]}',
-                                                          style: TextStyle(
-                                                              fontSize: 20.0),
+                                                  image: DecorationImage(
+                                                    image:
+                                                        CachedNetworkImageProvider(
+                                                          comment.user!.avatar!,
                                                         ),
-                                                      )
-                                                    : null,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
                                               ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                '${comment.user!.name}',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 16),
-                                              ),
-                                              Text(
-                                                '${DateFormat.yMMMMd().format(DateTime.parse(comment.created!))}',
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.grey),
+                                              SizedBox(width: 10),
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${comment.user!.name}',
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    '${DateFormat.yMMMMd().format(DateTime.parse(comment.created!))}',
+                                                    style: TextStyle(
+                                                      fontSize: 8,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                        height: 10,
+                                      SizedBox(height: 10),
+                                      Text(
+                                        '${comment.body}',
+                                        style: TextStyle(fontSize: 10),
                                       ),
-                                      Container(
-                                        margin:
-                                            const EdgeInsets.only(left: 40.0),
-                                        child: Text('${comment.body}'),
-                                      )
                                     ],
                                   ),
-                                );
-                              }))),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border(
-                      top: BorderSide(color: Colors.black26, width: 0.5)),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        decoration: kInputDecoration('Comment'),
-                        controller: _txtCommentController,
-                      ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: Colors.black26, width: 0.5),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.send),
-                      onPressed: () {
-                        if (_txtCommentController.text.isNotEmpty) {
-                          setState(() {
-                            _loading = true;
-                          });
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          decoration: kInputDecoration('Comment'),
+                          controller: _txtCommentController,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.send),
+                        onPressed: () {
+                          if (_txtCommentController.text.isNotEmpty) {
+                            setState(() {
+                              _loading = true;
+                            });
 
-                          _createComment();
-                        }
-                      },
-                    )
-                  ],
+                            _createComment();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              )
-            ]),
+              ],
+            ),
     );
   }
 }

@@ -1,8 +1,8 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:step/constants.dart';
 import 'package:step/models/response_model.dart';
 import 'package:step/models/room_model.dart';
+import 'package:step/palette.dart';
 import 'package:step/screens/login_screen.dart';
 import 'package:step/screens/room_detail_screen.dart';
 import 'package:step/services/room_service.dart';
@@ -14,20 +14,6 @@ class RoomScreen extends StatefulWidget {
 }
 
 class _RoomScreenState extends State<RoomScreen> {
-  final List<String> roomImages = [
-    'images/b1.jpg',
-    'images/b2.jpg',
-    'images/b3.jpg',
-    'images/b4.jpg',
-    'images/b5.jpg',
-    'images/b6.jpg',
-    'images/b7.jpg',
-    'images/b8.jpg',
-    'images/b9.jpg',
-    'images/b10.jpg',
-  ];
-  Random random = new Random();
-
   List<dynamic> _roomList = [];
   int userId = 0;
   bool _loading = true;
@@ -42,15 +28,18 @@ class _RoomScreenState extends State<RoomScreen> {
         _loading = _loading ? !_loading : _loading;
       });
     } else if (response.error == unauthorized) {
-      logout().then((value) => {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Login()),
-                (route) => false)
-          });
+      logout().then(
+        (value) => {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => Login()),
+            (route) => false,
+          ),
+        },
+      );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${response.error}'),
-      ));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${response.error}')));
     }
   }
 
@@ -65,65 +54,48 @@ class _RoomScreenState extends State<RoomScreen> {
     return _loading
         ? Center(child: CircularProgressIndicator())
         : RefreshIndicator(
-            onRefresh: () {
-              return retrieveRooms();
-            },
+            onRefresh: retrieveRooms,
             child: ListView.builder(
               itemCount: _roomList.length,
               itemBuilder: (BuildContext context, int index) {
                 Room room = _roomList[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => RoomDetailScreen(
-                              room: room,
-                            )));
-                  },
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: 140,
-                        margin: EdgeInsets.all(15),
-                        child: Image(
-                          image: AssetImage(
-                              roomImages[random.nextInt(roomImages.length)]),
-                          fit: BoxFit.cover,
+                return Card(
+                  elevation: 0,
+                  color: Palette.kToDark,
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => RoomDetailScreen(room: room),
                         ),
+                      );
+                    },
+                    title: Text(
+                      '${room.name}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-                      Container(
-                        margin: EdgeInsets.only(top: 30, left: 30),
-                        width: 220,
-                        child: Text(
-                          '${room.name}',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            letterSpacing: 1,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${room.key}',
+                          style: TextStyle(fontSize: 10, color: Colors.white70),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 58, left: 30),
-                        child: Text(
-                          '${room.section}',
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                              letterSpacing: 1),
+                        Text(
+                          ' ${room.section}',
+                          style: TextStyle(fontSize: 10, color: Colors.white70),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 80, left: 30),
-                        child: Text(
+                        Text(
                           '${room.user!.name}',
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white54,
-                              letterSpacing: 1),
+                          style: TextStyle(fontSize: 10, color: Colors.white70),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },

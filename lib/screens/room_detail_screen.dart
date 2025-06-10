@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,6 +12,7 @@ import 'package:step/models/material_model.dart';
 import 'package:step/models/people_model.dart';
 import 'package:step/models/response_model.dart';
 import 'package:step/models/room_model.dart';
+import 'package:step/palette.dart';
 import 'package:step/screens/assignment_detail_screen.dart';
 import 'package:step/screens/comment_screen.dart';
 import 'package:step/screens/login_screen.dart';
@@ -38,19 +38,6 @@ class RoomDetailScreen extends StatefulWidget {
 }
 
 class _RoomDetailScreenState extends State<RoomDetailScreen> {
-  final List<String> roomImages = [
-    'images/b1.jpg',
-    'images/b2.jpg',
-    'images/b3.jpg',
-    'images/b4.jpg',
-    'images/b5.jpg',
-    'images/b6.jpg',
-    'images/b7.jpg',
-    'images/b8.jpg',
-    'images/b9.jpg',
-    'images/b10.jpg',
-  ];
-  Random random = new Random();
   List<dynamic> _announcementsList = [];
   List<dynamic> _assessmentsList = [];
   List<dynamic> _materialsList = [];
@@ -239,79 +226,24 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.room.name!),
+        foregroundColor: Palette.kToDark,
         actions: [
           IconButton(icon: Icon(Icons.videocam), onPressed: () => googleMeet()),
         ],
         elevation: 0,
         scrolledUnderElevation: 2,
       ),
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 140,
-                margin: EdgeInsets.all(15),
-                child: Image(
-                  image: AssetImage(
-                    roomImages[random.nextInt(roomImages.length)],
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 30, left: 30),
-                width: 220,
-                child: Text(
-                  '${widget.room.name}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    letterSpacing: 1,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 58, left: 30),
-                child: Text(
-                  '${widget.room.section}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 80, left: 30),
-                child: Text(
-                  '${widget.room.key}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 102, left: 30),
-                child: Text(
-                  '${widget.room.user!.name}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white54,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Expanded(child: _buildBody()),
-        ],
-      ),
+      body: Column(children: [Expanded(child: _buildBody())]),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: Palette.kToDark,
+        unselectedItemColor: Colors.grey,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        iconSize: 28,
+        type: BottomNavigationBarType.shifting,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -375,14 +307,9 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
               itemCount: _announcementsList.length,
               itemBuilder: (BuildContext context, int index) {
                 Announcement announcement = _announcementsList[index];
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(color: Colors.black26, blurRadius: 0),
-                    ],
-                  ),
+                return Card(
+                  elevation: 0,
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -390,27 +317,13 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            margin: EdgeInsets.only(
-                              left: 15,
-                              top: 15,
-                              bottom: 10,
-                            ),
+                            margin: EdgeInsets.all(15),
                             child: Row(
                               children: [
-                                SizedBox(width: 10),
                                 CircleAvatar(
-                                  backgroundImage:
-                                      announcement.user?.avatar != null
-                                      ? CachedNetworkImageProvider(
-                                          '${announcement.user!.avatar}',
-                                        )
-                                      : null,
-                                  child: announcement.user?.avatar == null
-                                      ? Text(
-                                          announcement.user?.name?[0] ?? '',
-                                          style: TextStyle(fontSize: 24),
-                                        )
-                                      : null,
+                                  backgroundImage: CachedNetworkImageProvider(
+                                    announcement.user!.avatar!,
+                                  ),
                                 ),
                                 SizedBox(width: 10),
                                 Column(
@@ -419,11 +332,19 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                   children: [
                                     Text(
                                       '${announcement.user!.name}',
-                                      style: TextStyle(),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     Text(
-                                      '${DateFormat.yMMMMd().format(DateTime.parse(announcement.created!))}',
-                                      style: TextStyle(color: Colors.grey),
+                                      DateFormat.yMMMMd().format(
+                                        DateTime.parse(announcement.created!),
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -432,26 +353,54 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           ),
                         ],
                       ),
+                      if (announcement.title != null)
+                        Container(
+                          width: MediaQuery.of(context).size.width - 40,
+                          margin: EdgeInsets.only(
+                            left: 20,
+                            top: 15,
+                            bottom: 10,
+                          ),
+                          child: Text(
+                            (announcement.title)!.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       Container(
                         width: MediaQuery.of(context).size.width - 40,
-                        margin: EdgeInsets.only(left: 15, top: 15, bottom: 10),
-                        child: Text(
-                          '${announcement.title ?? 'No Title'}',
-                          style: TextStyle(fontSize: 15, color: Colors.grey),
+                        margin: EdgeInsets.only(left: 12, right: 12),
+                        child: Html(
+                          data: announcement.body ?? 'N/A',
+                          style: {'body': Style(fontSize: FontSize(10))},
                         ),
                       ),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width - 40,
-                      //   margin:
-                      //       EdgeInsets.only(left: 12, top: 15, bottom: 10),
-                      //   child: Text(
-                      //       '${announcement.body?.replaceAll(RegExp('<p>|</p>|<br>'), '') ?? 'No Body'}'),
-                      // ),
-                      Container(
-                        width: MediaQuery.of(context).size.width - 40,
-                        margin: EdgeInsets.only(left: 12, top: 15, bottom: 10),
-                        child: Html(data: announcement.body ?? 'Null'),
-                      ),
+                      if (announcement.file != null)
+                        Container(
+                          width: MediaQuery.of(context).size.width - 40,
+                          margin: EdgeInsets.only(left: 20, right: 20),
+                          child: InkWell(
+                            onTap: () async {
+                              final assessmentLink = Uri.parse(
+                                '${announcement.file}',
+                              );
+                              if (await canLaunchUrl(assessmentLink)) {
+                                await launchUrl(assessmentLink);
+                              } else {
+                                print('Could not launch $assessmentLink');
+                              }
+                            },
+                            child: Text(
+                              'see attachment',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Palette.kToDark,
+                              ),
+                            ),
+                          ),
+                        ),
                       InkWell(
                         onTap: () {
                           Navigator.of(context).push(
@@ -463,13 +412,16 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           );
                         },
                         child: Container(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.centerRight,
                           height: 40,
                           width: MediaQuery.of(context).size.width - 30,
-                          margin: EdgeInsets.only(left: 15),
+                          margin: EdgeInsets.only(left: 20, right: 20),
                           child: Text(
                             '${announcement.commentCount ?? 'No Class Comment'} Class Comment',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Palette.kToDark,
+                            ),
                           ),
                         ),
                       ),
@@ -492,69 +444,40 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
               itemCount: _assessmentsList.length,
               itemBuilder: (BuildContext context, int index) {
                 Assessment assessment = _assessmentsList[index];
-                return InkWell(
-                  onTap: () async {
-                    final assessmentLink = Uri.parse(
-                      'https://udd.steps.com.ph/classwork/student/assessment/${assessment.id}',
-                    ); // Replace with your assessment URL
-                    if (await canLaunchUrl(assessmentLink)) {
-                      await launchUrl(assessmentLink);
-                    } else {
-                      // Handle error if the URL cannot be launched
-                      print('Could not launch $assessmentLink');
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Container(
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: Colors.grey,
-                            ),
-                            child: Icon(
-                              Icons.assignment,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${assessment.title ?? 'No Title'} ',
-                                style: TextStyle(letterSpacing: 1),
-                              ),
-                              Text(
-                                '${assessment.status}',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                'Start: ${assessment.startDate}',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                'Due: ${assessment.endDate}',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                return Card(
+                  elevation: 0,
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: ListTile(
+                    onTap: () async {
+                      final assessmentLink = Uri.parse(
+                        'https://udd.steps.com.ph/classwork/student/assessment/${assessment.id}',
+                      ); // Replace with your assessment URL
+                      if (await canLaunchUrl(assessmentLink)) {
+                        await launchUrl(assessmentLink);
+                      } else {
+                        // Handle error if the URL cannot be launched
+                        print('Could not launch $assessmentLink');
+                      }
+                    },
+                    title: Text(
+                      '${assessment.title}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${assessment.startDate} - ${assessment.endDate} ',
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                        Text(
+                          '${assessment.status}',
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -565,58 +488,28 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
   Widget _buildMaterials() {
     return RefreshIndicator(
-      onRefresh: () {
-        return _getMaterials();
-      },
+      onRefresh: () => _getMaterials(),
       child: _materialsList.isEmpty
           ? Center(child: Text('No Materials'))
           : ListView.builder(
               itemCount: _materialsList.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 Materials material = _materialsList[index];
-                return InkWell(
-                  onTap: () {
-                    downloadFile(material.url!);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Container(
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: Colors.grey,
-                            ),
-                            child: Icon(
-                              Icons.assignment,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${material.title ?? 'No Title'} ',
-                                  style: TextStyle(letterSpacing: 1),
-                                ),
-                                Text(
-                                  '${material.description ?? 'No Description'}',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                return Card(
+                  elevation: 0,
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: ListTile(
+                    onTap: () => downloadFile(material.url!),
+                    title: Text(
+                      '${material.title}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    subtitle: Text(
+                      '${material.description}',
+                      style: TextStyle(fontSize: 10, color: Colors.grey),
                     ),
                   ),
                 );
@@ -627,62 +520,36 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
   Widget _buildAssignments() {
     return RefreshIndicator(
-      onRefresh: () {
-        return _getAssignments();
-      },
+      onRefresh: () => _getAssignments(),
       child: _assignmentsList.isEmpty
           ? Center(child: Text('No Assignments'))
           : ListView.builder(
               itemCount: _assignmentsList.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 Assignment assignment = _assignmentsList[index];
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
+                return Card(
+                  elevation: 0,
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: ListTile(
+                    onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
                             AssignmentDetailScreen(assignment: assignment),
                       ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Container(
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: Colors.grey,
-                            ),
-                            child: Icon(
-                              Icons.assignment,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${assignment.title ?? 'No Title'} ',
-                                style: TextStyle(letterSpacing: 1),
-                              ),
-                              Text(
-                                'Due: ${DateFormat.yMMMMd().format(DateTime.parse(assignment.due!))}',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                    ),
+                    title: Text(
+                      '${assignment.title}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMMd().format(
+                        DateTime.parse(assignment.due!),
+                      ),
+                      style: TextStyle(fontSize: 10, color: Colors.grey),
                     ),
                   ),
                 );
@@ -698,82 +565,50 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       },
       child: _peopleList.isEmpty
           ? Center(child: Text('No People'))
-          : ListView.separated(
+          : ListView.builder(
               itemCount: _peopleList.length,
-              separatorBuilder: (BuildContext context, int index) => Divider(),
               itemBuilder: (BuildContext context, int index) {
                 People people = _peopleList[index];
                 if (people.staff != null) {
                   return _buildStaffRow(people.staff!);
                 } else if (people.student != null) {
                   return _buildStudentRow(people.student!);
-                } else {
-                  return Container(); // return an empty container if there's no staff or student
                 }
+                return null; // return an empty widget instead of null
               },
             ),
     );
   }
 
   Widget _buildStaffRow(Staff staff) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Container(
-        child: Row(
-          children: [
-            Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.grey,
-              ),
-              child: Icon(Icons.person, color: Colors.white, size: 30),
-            ),
-            SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('${staff.name}', style: TextStyle(letterSpacing: 1)),
-                Text(
-                  'Teacher',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
-            ),
-          ],
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: ListTile(
+        title: Text(
+          '${staff.name}',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          'Faculty',
+          style: TextStyle(fontSize: 10, color: Colors.grey),
         ),
       ),
     );
   }
 
   Widget _buildStudentRow(Student student) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Container(
-        child: Row(
-          children: [
-            Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.grey,
-              ),
-              child: Icon(Icons.person, color: Colors.white, size: 30),
-            ),
-            SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('${student.name}', style: TextStyle(letterSpacing: 1)),
-                Text(
-                  'Student',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
-            ),
-          ],
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: ListTile(
+        title: Text(
+          '${student.name}',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          'Student',
+          style: TextStyle(fontSize: 10, color: Colors.grey),
         ),
       ),
     );
@@ -791,10 +626,21 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
               itemBuilder: (BuildContext context, int index) {
                 Attendance attendance = _attendancesList[index];
                 return Card(
+                  elevation: 0,
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ListTile(
-                    title: Text(attendance.description ?? ''),
+                    title: Text(
+                      '${attendance.description}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     subtitle: Text(
-                      '${DateFormat.yMMMMd().format(DateTime.parse(attendance.date ?? ''))}',
+                      DateFormat.yMMMMd().format(
+                        DateTime.parse(attendance.date ?? ''),
+                      ),
+                      style: TextStyle(fontSize: 10, color: Colors.grey),
                     ),
                     trailing: TextButton(
                       onPressed: () {

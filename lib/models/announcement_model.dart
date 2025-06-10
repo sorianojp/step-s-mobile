@@ -7,6 +7,7 @@ class Announcement {
   String? created;
   User? user;
   int? commentCount;
+  String? file;
 
   Announcement({
     this.id,
@@ -15,6 +16,7 @@ class Announcement {
     this.created,
     this.user,
     this.commentCount,
+    this.file,
   });
 
   factory Announcement.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class Announcement {
         avatar: json['user']['avatar'],
       ),
       commentCount: json['comments_count'],
+      file: json['file'],
     );
   }
 }

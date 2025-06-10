@@ -33,10 +33,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Palette.kToDark,
-          foregroundColor: Colors.white,
           title: Text('Notifications'),
+          elevation: 0,
+          foregroundColor: Palette.kToDark,
         ),
         body: RefreshIndicator(
           onRefresh: _loadNotifications,
@@ -68,56 +67,50 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   itemCount: notifications.length,
                   itemBuilder: (BuildContext context, int index) {
                     final notification = notifications[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Container(
-                        child: Row(
+                    return Card(
+                      elevation: 0,
+                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      child: ListTile(
+                        leading: Container(
+                          width: 40, // Adjust size as needed
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Palette
+                                .kToDark, // Change background color as needed
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.notifications,
+                            color: Colors.white,
+                            size: 24, // Adjust to fit nicely within the circle
+                          ),
+                        ),
+
+                        title: Text(
+                          notification['data']['type'],
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
+                            Text(
+                              notification['data']['title']?.replaceAll(
+                                RegExp('<p>|</p>|<br>'),
+                                '',
+                              ),
+                              style: TextStyle(
+                                fontSize: 10,
                                 color: Colors.grey,
                               ),
-                              child: Icon(
-                                Icons.notifications,
-                                color: Colors.white,
-                                size: 30,
-                              ),
                             ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    notification['data']['type'],
-                                    style: TextStyle(
-                                      letterSpacing: 1,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Text(
-                                    notification['data']['title']?.replaceAll(
-                                      RegExp('<p>|</p>|<br>'),
-                                      '',
-                                    ),
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 14,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
-                                  Text(
-                                    'Due: ${DateFormat.yMMMMd().format(DateTime.parse(notification['data']['due_date']))}',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
+                            Text(
+                              'Due on ${DateFormat.yMMMMd().format(DateTime.parse(notification['data']['due_date']))}',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey,
                               ),
                             ),
                           ],

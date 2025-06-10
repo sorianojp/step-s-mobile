@@ -27,7 +27,9 @@ class MyApp extends StatelessWidget {
       title: 'STEP S',
       theme: ThemeData(
         primarySwatch: Palette.kToDark,
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        textTheme: GoogleFonts.instrumentSansTextTheme(
+          Theme.of(context).textTheme,
+        ),
       ),
       debugShowCheckedModeBanner: false,
       home: Loading(),

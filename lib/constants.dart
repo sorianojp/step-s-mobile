@@ -31,7 +31,7 @@ InputDecoration kInputDecoration(String label) {
     ), // matches button
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10), // match button radius
-      borderSide: BorderSide(width: 1, color: Colors.black),
+      borderSide: BorderSide(width: 1, color: Palette.kToDark),
     ),
   );
 }
@@ -41,15 +41,15 @@ TextButton kTextButton(String label, VoidCallback onPressed) {
   return TextButton(
     child: Text(label, style: TextStyle(color: Colors.white)),
     style: ButtonStyle(
-      shape: MaterialStateProperty.resolveWith(
+      shape: WidgetStateProperty.resolveWith(
         (states) => RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ), // same radius
       ),
-      backgroundColor: MaterialStateProperty.resolveWith(
+      backgroundColor: WidgetStateProperty.resolveWith(
         (states) => Palette.kToDark,
       ),
-      padding: MaterialStateProperty.resolveWith(
+      padding: WidgetStateProperty.resolveWith(
         (states) =>
             EdgeInsets.symmetric(vertical: 12, horizontal: 16), // matches input
       ),
@@ -57,3 +57,23 @@ TextButton kTextButton(String label, VoidCallback onPressed) {
     onPressed: onPressed,
   );
 }
+
+Widget buildCustomCard({required Widget child}) {
+  return Card(
+    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+    color: Palette.kToDark,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    elevation: 1,
+    child: Padding(padding: EdgeInsets.all(12), child: child),
+  );
+}
+
+const TextStyle titleStyle = TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
+
+const TextStyle subtitleStyle = TextStyle(fontSize: 12, color: Colors.white70);
+
+const TextStyle dateStyle = TextStyle(fontSize: 10, color: Colors.white54);
