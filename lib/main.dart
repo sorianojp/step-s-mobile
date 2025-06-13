@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:step/screens/loading_screen.dart';
 import 'palette.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -16,6 +17,7 @@ class MyHttpOverrides extends HttpOverrides {
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:step/constants.dart';
 import 'package:step/models/response_model.dart';
 import 'package:step/models/user_model.dart';
@@ -19,6 +20,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late BannerAd _bannerAd;
+  bool _isAdLoaded = false;
   int currentIndex = 0;
   User? user;
   int notificationsCount = 0;
@@ -69,6 +72,22 @@ class _HomeState extends State<Home> {
     super.initState();
     getUser();
     _loadNotificationsCount();
+    _bannerAd = BannerAd(
+      adUnitId:
+          'ca-app-pub-5523564742730054/8617457623', // Replace with your Ad Unit ID
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) => setState(() => _isAdLoaded = true),
+        onAdFailedToLoad: (_, error) => print('Ad load failed: $error'),
+      ),
+    )..load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
   }
 
   @override
@@ -184,11 +203,23 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      body: currentIndex == 0
-          ? RoomScreen()
-          : currentIndex == 1
-          ? GradeScreen()
-          : Profile(user: user),
+      body: Column(
+        children: [
+          Expanded(
+            child: currentIndex == 0
+                ? RoomScreen()
+                : currentIndex == 1
+                ? GradeScreen()
+                : Profile(user: user),
+          ),
+          if (_isAdLoaded)
+            Container(
+              height: _bannerAd.size.height.toDouble(),
+              width: _bannerAd.size.width.toDouble(),
+              child: AdWidget(ad: _bannerAd),
+            ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Palette.kToDark,
         foregroundColor: Colors.white,
